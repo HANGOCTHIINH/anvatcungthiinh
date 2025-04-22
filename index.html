@@ -11,6 +11,7 @@
     <style>
         body {
             font-family: 'Be Vietnam Pro', sans-serif;
+            scroll-behavior: smooth;
         }
         ::-webkit-scrollbar {
             width: 8px;
@@ -20,33 +21,48 @@
             background: #f1f1f1;
         }
         ::-webkit-scrollbar-thumb {
-            background: #a8a29e;
+            background: #a8a29e; /* stone-400 */
             border-radius: 8px;
         }
         ::-webkit-scrollbar-thumb:hover {
-            background: #78716c;
+            background: #78716c; /* stone-500 */
+        }
+        /* Page Section Animation */
+        .page-section {
+            animation: fadeInSlideUp 0.6s ease-out forwards;
+            opacity: 0;
         }
         .page-section.hidden {
             display: none;
+            opacity: 0;
+            animation: none;
         }
+
+        @keyframes fadeInSlideUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Chat Window Animation */
         .chat-window {
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
-            transform: translateY(10px);
+            transform: translateY(20px) scale(0.95);
             opacity: 0;
             pointer-events: none;
         }
         .chat-window.open {
-            transform: translateY(0);
+            transform: translateY(0) scale(1);
             opacity: 1;
             pointer-events: auto;
         }
+        /* Map Placeholder */
         .map-placeholder {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio */
             height: 0;
             overflow: hidden;
-            background-color: #e5e7eb;
+            background-color: #e5e7eb; /* gray-200 */
             border-radius: 0.5rem;
         }
         .map-placeholder iframe,
@@ -59,9 +75,10 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6b7280;
+            color: #6b7280; /* gray-500 */
             border: 0;
         }
+        /* Banner Overlay */
         .banner-overlay::before {
             content: "";
             position: absolute;
@@ -69,14 +86,35 @@
             left: 0;
             right: 0;
             bottom: 0;
-            background-color: rgba(0, 0, 0, 0.4);
+            background: linear-gradient(to bottom, rgba(0,0,0,0.1), rgba(0,0,0,0.5));
             border-radius: 0.5rem;
             z-index: 1;
+            transition: background-color 0.3s ease;
         }
         .banner-content {
             position: relative;
             z-index: 2;
         }
+        /* Product Card Hover Animation */
+        .product-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        }
+        .product-card:hover {
+             transform: translateY(-5px);
+             box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+        }
+        .product-card img {
+            transition: transform 0.3s ease-in-out;
+        }
+         .product-card:hover img {
+            transform: scale(1.03);
+        }
+        /* Button Active State */
+        button:active {
+            transform: scale(0.97);
+        }
+        /* Removed feedback-card specific animation */
+
     </style>
 </head>
 <body class="bg-gray-100 font-sans antialiased">
@@ -87,7 +125,7 @@
                 <img
                     src="https://i.imgur.com/3iKhwod.png"
                     alt="Logo Ăn Vặt Cùng Thiinh"
-                    class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover flex-shrink-0"
+                    class="h-10 w-10 md:h-12 md:w-12 rounded-full object-cover flex-shrink-0 transition-transform duration-300 hover:scale-110"
                     onerror="this.style.display='none'"
                 />
                 <span class="text-lg md:text-xl font-bold text-amber-600 hidden sm:inline whitespace-nowrap">
@@ -102,11 +140,11 @@
                        type="search"
                        id="search-input"
                        placeholder="Tìm kiếm món ngon..."
-                       class="border border-gray-300 rounded-l-full px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 w-full"
+                       class="border border-gray-300 rounded-l-full px-4 py-1.5 text-sm focus:outline-none focus:ring-1 focus:ring-amber-500 focus:border-amber-500 w-full transition-shadow duration-200 focus:shadow-sm"
                      />
                      <button
                        type="submit"
-                       class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-r-full transition duration-300"
+                       class="bg-amber-500 hover:bg-amber-600 text-white px-3 py-1.5 rounded-r-full transition duration-300 active:scale-95"
                        aria-label="Tìm kiếm"
                      >
                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
@@ -119,27 +157,27 @@
 
             <div class="flex items-center space-x-4 order-2 md:order-3 flex-shrink-0">
                 <div class="hidden lg:flex space-x-6">
-                    <button onclick="navigateTo('home')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium">Trang chủ</button>
-                    <button onclick="navigateTo('products')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium">Sản phẩm</button>
-                    <button onclick="navigateTo('contact')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium">Liên hệ</button>
-                    <button onclick="navigateTo('support')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium">Hỗ trợ</button>
+                    <button onclick="navigateTo('home')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium px-2 py-1 rounded">Trang chủ</button>
+                    <button onclick="navigateTo('products')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium px-2 py-1 rounded">Sản phẩm</button>
+                    <button onclick="navigateTo('contact')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium px-2 py-1 rounded">Liên hệ</button>
+                    <button onclick="navigateTo('support')" class="text-gray-700 hover:text-amber-600 transition duration-300 font-medium px-2 py-1 rounded">Hỗ trợ</button>
                 </div>
-                <button onclick="navigateTo('cart')" aria-label="Giỏ hàng" class="relative text-gray-600 hover:text-amber-600 transition duration-300">
+                <button onclick="navigateTo('cart')" aria-label="Giỏ hàng" class="relative text-gray-600 hover:text-amber-600 transition duration-300 p-2 rounded-full hover:bg-gray-100">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
                   </svg>
-                  <span id="cart-item-count" class="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                  <span id="cart-item-count" class="absolute -top-1 -right-1 bg-red-500 text-white text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
-                <button id="mobile-menu-button" class="lg:hidden text-gray-600 hover:text-amber-600">
+                <button id="mobile-menu-button" class="lg:hidden text-gray-600 hover:text-amber-600 p-2 rounded-full hover:bg-gray-100">
                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7" /></svg>
                 </button>
             </div>
 
-             <div id="mobile-menu" class="w-full lg:hidden hidden flex-col space-y-2 mt-2 order-last border-t pt-3">
-                <button onclick="navigateTo('home'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-1">Trang chủ</button>
-                <button onclick="navigateTo('products'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-1">Sản phẩm</button>
-                <button onclick="navigateTo('contact'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-1">Liên hệ</button>
-                <button onclick="navigateTo('support'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-1">Hỗ trợ</button>
+             <div id="mobile-menu" class="w-full lg:hidden hidden flex-col space-y-1 mt-2 order-last border-t pt-3">
+                <button onclick="navigateTo('home'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-2 px-3 rounded hover:bg-gray-100">Trang chủ</button>
+                <button onclick="navigateTo('products'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-2 px-3 rounded hover:bg-gray-100">Sản phẩm</button>
+                <button onclick="navigateTo('contact'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-2 px-3 rounded hover:bg-gray-100">Liên hệ</button>
+                <button onclick="navigateTo('support'); closeMobileMenu();" class="block text-left w-full text-gray-700 hover:text-amber-600 transition duration-300 py-2 px-3 rounded hover:bg-gray-100">Hỗ trợ</button>
             </div>
           </nav>
     </header>
@@ -154,7 +192,7 @@
                 <div class="banner-content">
                     <h1 class="text-3xl md:text-5xl font-bold mb-4 drop-shadow-md">Thế Giới Đồ Ăn Vặt</h1>
                     <p class="text-lg md:text-xl mb-6 drop-shadow">Khám phá hương vị thơm ngon, độc đáo chỉ có tại Ăn Vặt Cùng Thiinh!</p>
-                    <button onclick="navigateTo('products')" class="bg-white text-amber-600 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition duration-300 shadow hover:shadow-md">Mua Ngay</button>
+                    <button onclick="navigateTo('products')" class="bg-white text-amber-600 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition duration-300 shadow hover:shadow-md transform hover:scale-105 active:scale-95">Mua Ngay</button>
                 </div>
             </div>
 
@@ -255,7 +293,7 @@
                     <label for="contact-message" class="block text-sm font-medium text-gray-700 mb-1">Nội dung</label>
                     <textarea id="contact-message" name="message" rows="4" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"></textarea>
                   </div>
-                  <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-md transition duration-300">
+                  <button type="submit" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-2 px-4 rounded-md transition duration-300 active:scale-95">
                     Gửi đi
                   </button>
                 </form>
@@ -346,7 +384,7 @@
     </footer>
 
     <div id="chatbot-container">
-        <button id="chatbot-toggle" class="fixed bottom-5 right-5 bg-amber-500 hover:bg-amber-600 text-white rounded-full p-4 shadow-lg z-50 transition-transform duration-300 hover:scale-110" aria-label="Mở chat hỗ trợ">
+        <button id="chatbot-toggle" class="fixed bottom-5 right-5 bg-amber-500 hover:bg-amber-600 text-white rounded-full p-4 shadow-lg z-50 transition-transform duration-300 hover:scale-110 active:scale-95" aria-label="Mở chat hỗ trợ">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" />
             </svg>
@@ -355,7 +393,7 @@
         <div id="chat-window" class="chat-window fixed bottom-20 right-5 w-80 sm:w-96 max-h-[70vh] bg-white rounded-lg shadow-xl z-40 flex flex-col border border-gray-300 hidden">
             <div class="bg-amber-500 text-white p-3 flex justify-between items-center rounded-t-lg flex-shrink-0">
                 <h3 class="font-semibold text-sm">Hỗ trợ trực tuyến</h3>
-                <button id="chatbot-close" class="text-white hover:text-gray-200">
+                <button id="chatbot-close" class="text-white hover:text-gray-200 p-1 rounded-full hover:bg-white/20">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
                   </svg>
@@ -373,7 +411,7 @@
                 />
                 <button
                   type="submit"
-                  class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-r-md transition duration-300 disabled:opacity-50"
+                  class="bg-amber-500 hover:bg-amber-600 text-white px-4 py-2 rounded-r-md transition duration-300 disabled:opacity-50 active:scale-95"
                 >
                   Gửi
                 </button>
@@ -399,7 +437,6 @@
           { id: 11, name: 'Khô Bò Miếng Cay Đặc Sản (Hộp 250g)', price: 390000, originalPrice: null, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7UK0eLDYTmBqlyhN16gEtrXEsdlT1Ce4lww&s', description: 'Thịt bò tươi ngon, tẩm ướp gia vị cay đậm đà theo công thức gia truyền.', category: 'Khô các loại', stock: 35, featured: false, bestSeller: false },
         ];
         const mockCategories = ['Tất cả', 'Món trộn', 'Khô các loại', 'Món chiên', 'Món Hàn Quốc', 'Món Thái Lan', 'Các loại hạt'];
-        // Updated feedback data
         const mockFeedbacks = [
             { id: 1, name: 'Hà Ngọc Thịnh', quote: 'Đồ ăn vặt ở đây ngon tuyệt vời, đóng gói cẩn thận, giao hàng nhanh. Sẽ ủng hộ shop dài dài!', avatar: 'https://i.imgur.com/ReZZoPu.jpeg' },
             { id: 2, name: 'Nhữ Ngọc Hà', quote: 'Hạt điều rang muối rất giòn và thơm, không bị hôi dầu. Giá cả hợp lý so với chất lượng.', avatar: 'https://i.imgur.com/VCd5abf.png' },
@@ -445,12 +482,18 @@
         function navigateTo(pageId, params = null) {
             pageSections.forEach(section => {
                 section.classList.add('hidden');
+                section.style.opacity = 0;
             });
             const targetPage = document.getElementById(pageId);
             if (targetPage) {
                 targetPage.classList.remove('hidden');
+                void targetPage.offsetWidth;
+                targetPage.style.opacity = 1;
             } else {
-                document.getElementById('home').classList.remove('hidden');
+                const homePage = document.getElementById('home');
+                homePage.classList.remove('hidden');
+                 void homePage.offsetWidth;
+                 homePage.style.opacity = 1;
             }
 
             if (pageId === 'products') {
@@ -484,13 +527,13 @@
             const discountPercent = hasDiscount ? Math.round(((product.originalPrice - product.price) / product.originalPrice) * 100) : 0;
 
             return `
-                <div class="border rounded-lg overflow-hidden shadow-lg hover:shadow-xl transition-shadow duration-300 bg-white flex flex-col relative group h-full">
+                <div class="product-card border rounded-lg overflow-hidden shadow-lg bg-white flex flex-col relative group h-full">
                     ${hasDiscount ? `<div class="absolute top-2 right-2 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-md z-10">GIẢM ${discountPercent}%</div>` : ''}
                     <div class="aspect-square overflow-hidden">
                         <img
                             src="${product.image}"
                             alt="[Hình ảnh của ${product.name}]"
-                            class="w-full h-full object-cover cursor-pointer group-hover:scale-105 transition-transform duration-300"
+                            class="w-full h-full object-cover cursor-pointer"
                             onerror="this.onerror=null; this.src='https://placehold.co/300x300/cccccc/ffffff?text=Image+Not+Found';"
                             onclick="navigateTo('product-detail', { productId: ${product.id} })"
                         />
@@ -506,7 +549,7 @@
                                 Xem chi tiết
                             </button>
                             ${product.stock > 0 ?
-                                `<button onclick="addToCart(${product.id})" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1 rounded-md transition duration-300">
+                                `<button onclick="addToCart(${product.id})" class="bg-amber-500 hover:bg-amber-600 text-white text-xs px-3 py-1 rounded-md transition duration-300 transform hover:scale-105 active:scale-95">
                                     Thêm giỏ
                                 </button>` :
                                 `<span class="text-xs text-red-500 font-medium">Hết hàng</span>`
@@ -576,7 +619,7 @@
                                 <input type="number" id="quantity-input-${productId}" value="1" min="1" max="${product.stock}" class="w-12 text-center border-t border-b border-gray-300 py-1 focus:outline-none text-sm" onchange="handleQuantityInputChange(${productId})">
                                 <button id="increase-qty-${productId}" onclick="updateQuantityInput(${productId}, 1)" class="bg-gray-200 px-3 py-1 rounded-r hover:bg-gray-300 disabled:opacity-50 transition duration-200">+</button>
                             </div>
-                            <button onclick="handleAddToCartFromDetail(${productId})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center text-base shadow hover:shadow-lg">
+                            <button onclick="handleAddToCartFromDetail(${productId})" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 px-6 rounded-lg transition duration-300 flex items-center justify-center text-base shadow hover:shadow-lg active:scale-95">
                                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" viewBox="0 0 20 20" fill="currentColor"><path d="M3 1a1 1 0 000 2h1.22l.305 1.222a.997.997 0 00.922.778h9.906l-1.17 4.681a1.001 1.001 0 01-.97.719H6.878a1 1 0 01-.996-.858L5.5 6.281A1.001 1.001 0 004.504 5H3a1 1 0 000 2h1.05l1.737 6.948A1 1 0 007.28 15h7.44a1 1 0 00.97-.719l2.716-10.862A1 1 0 0017.437 3H5.219L4.914 1.778A1 1 0 003.992 1H3zm4.28 12a1.5 1.5 0 100 3 1.5 1.5 0 000-3zm8 0a1.5 1.5 0 100 3 1.5 1.5 0 000-3z" /></svg>
                                 Thêm vào giỏ hàng
                             </button>
@@ -607,7 +650,7 @@
                     </div>`;
             }).join('');
             const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            cartContentContainer.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-2 space-y-4">${itemsHTML}</div><div class="lg:col-span-1"><div class="bg-gray-50 p-6 rounded-lg shadow-sm border sticky top-24"><h2 class="text-xl font-semibold mb-4">Tóm Tắt Đơn Hàng</h2><div class="flex justify-between mb-2 text-sm"><span>Tạm tính:</span><span>${formatCurrency(total)}</span></div><div class="flex justify-between mb-4 pb-4 border-b text-sm"><span>Phí vận chuyển:</span><span>(Tính khi thanh toán)</span></div><div class="flex justify-between font-bold text-lg mb-6"><span>Tổng cộng:</span><span class="text-red-600">${formatCurrency(total)}</span></div><button onclick="alert('Chức năng thanh toán chưa được triển khai!')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow hover:shadow-lg">Tiến hành thanh toán</button></div></div></div>`;
+            cartContentContainer.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-2 space-y-4">${itemsHTML}</div><div class="lg:col-span-1"><div class="bg-gray-50 p-6 rounded-lg shadow-sm border sticky top-24"><h2 class="text-xl font-semibold mb-4">Tóm Tắt Đơn Hàng</h2><div class="flex justify-between mb-2 text-sm"><span>Tạm tính:</span><span>${formatCurrency(total)}</span></div><div class="flex justify-between mb-4 pb-4 border-b text-sm"><span>Phí vận chuyển:</span><span>(Tính khi thanh toán)</span></div><div class="flex justify-between font-bold text-lg mb-6"><span>Tổng cộng:</span><span class="text-red-600">${formatCurrency(total)}</span></div><button onclick="alert('Chức năng thanh toán chưa được triển khai!')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow hover:shadow-lg active:scale-95">Tiến hành thanh toán</button></div></div></div>`;
         }
 
         function renderCategoryFilters() {
@@ -618,26 +661,33 @@
         function renderCategoryLinks() {
             if (!categoryLinksContainer) return;
             const categoriesToLink = mockCategories.filter(cat => cat !== 'Tất cả');
-            categoryLinksContainer.innerHTML = categoriesToLink.map(cat => `<button onclick="navigateTo('products', { category: '${cat}' })" class="bg-gray-200 hover:bg-amber-200 text-gray-700 px-4 py-2 rounded-full transition duration-300 text-sm">${cat}</button>`).join('');
+            categoryLinksContainer.innerHTML = categoriesToLink.map(cat => `<button onclick="navigateTo('products', { category: '${cat}' })" class="bg-gray-200 hover:bg-amber-200 text-gray-700 px-4 py-2 rounded-full transition duration-300 text-sm transform hover:scale-105 active:scale-95">${cat}</button>`).join('');
         }
 
         function renderCustomerFeedback() {
             if (!customerFeedbackContainer) return;
-            customerFeedbackContainer.innerHTML = mockFeedbacks.map(feedback => `<div class="bg-white p-6 rounded-lg shadow-md border border-amber-100 text-center flex flex-col items-center h-full"><img src="${feedback.avatar}" alt="[Ảnh đại diện của ${feedback.name}]" class="w-20 h-20 rounded-full mb-4 object-cover border-2 border-amber-300 flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/cccccc/ffffff?text=?';"/><p class="text-gray-600 italic mb-3 text-sm flex-grow">"${feedback.quote}"</p><p class="font-semibold text-amber-600 mt-auto text-sm">${feedback.name}</p></div>`).join('');
+            // Removed feedback-card class and style here
+            customerFeedbackContainer.innerHTML = mockFeedbacks.map(feedback => `
+                <div class="bg-white p-6 rounded-lg shadow-md border border-amber-100 text-center flex flex-col items-center h-full transition-shadow duration-300 hover:shadow-lg">
+                    <img src="${feedback.avatar}" alt="[Ảnh đại diện của ${feedback.name}]" class="w-20 h-20 rounded-full mb-4 object-cover border-2 border-amber-300 flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/cccccc/ffffff?text=?';"/>
+                    <p class="text-gray-600 italic mb-3 text-sm flex-grow">"${feedback.quote}"</p>
+                    <p class="font-semibold text-amber-600 mt-auto text-sm">${feedback.name}</p>
+                </div>`).join('');
         }
 
         function renderSocialLinks(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
+            // Updated social links
             const socialLinks = [
-                { name: 'Facebook', url: '#', iconClass: 'hover:text-blue-500', svgPath: 'M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z' },
-                { name: 'Instagram', url: '#', iconClass: 'hover:text-pink-500', svgPath: 'M12.315 2.104a5.87 5.87 0 00-4.63 0C3.381 2.56 1.087 4.854.622 9.135a5.87 5.87 0 000 4.63c.465 4.281 2.76 6.575 7.045 7.04a5.87 5.87 0 004.63 0c4.285-.465 6.58-2.76 7.04-7.04a5.87 5.87 0 000-4.63c-.46-4.281-2.755-6.575-7.04-7.04zm-1.19 16.097a4.08 4.08 0 01-3.42-.465c-2.91-.93-4.516-3.006-4.837-6.14a4.08 4.08 0 010-3.42c.321-3.135 1.927-5.21 4.837-6.14a4.08 4.08 0 013.42-.465c2.91.93 4.516 3.006 4.837 6.14a4.08 4.08 0 010 3.42c-.321 3.135-1.927 5.21-4.837 6.14a4.08 4.08 0 01-3.42.465zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.468a3.333 3.333 0 110-6.666 3.333 3.333 0 010 6.666zm5.338-9.87a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z' },
-                { name: 'TikTok', url: '#', iconClass: 'hover:text-black', svgPath: 'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z' },
-                { name: 'YouTube', url: '#', iconClass: 'hover:text-red-600', svgPath: 'M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.78 22 12 22 12s0 3.22-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.594.418-7.814.418-7.814.418s-6.22 0-7.814-.418a2.505 2.505 0 0 1-1.768-1.768C2 15.22 2 12 2 12s0-3.22.418-4.814a2.505 2.505 0 0 1 1.768-1.768C5.78 5 12 5 12 5s6.22 0 7.812.418ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z' }
+                { name: 'Facebook', url: 'https://www.facebook.com/', iconClass: 'hover:text-blue-500', svgPath: 'M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z' },
+                { name: 'Instagram', url: 'https://www.instagram.com/', iconClass: 'hover:text-pink-500', svgPath: 'M12.315 2.104a5.87 5.87 0 00-4.63 0C3.381 2.56 1.087 4.854.622 9.135a5.87 5.87 0 000 4.63c.465 4.281 2.76 6.575 7.045 7.04a5.87 5.87 0 004.63 0c4.285-.465 6.58-2.76 7.04-7.04a5.87 5.87 0 000-4.63c-.46-4.281-2.755-6.575-7.04-7.04zm-1.19 16.097a4.08 4.08 0 01-3.42-.465c-2.91-.93-4.516-3.006-4.837-6.14a4.08 4.08 0 010-3.42c.321-3.135 1.927-5.21 4.837-6.14a4.08 4.08 0 013.42-.465c2.91.93 4.516 3.006 4.837 6.14a4.08 4.08 0 010 3.42c-.321 3.135-1.927 5.21-4.837 6.14a4.08 4.08 0 01-3.42.465zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.468a3.333 3.333 0 110-6.666 3.333 3.333 0 010 6.666zm5.338-9.87a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z' },
+                { name: 'TikTok', url: 'https://www.tiktok.com/', iconClass: 'hover:text-black', svgPath: 'M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z' },
+                { name: 'YouTube', url: 'https://www.youtube.com/', iconClass: 'hover:text-red-600', svgPath: 'M19.812 5.418c.861.23 1.538.907 1.768 1.768C21.998 8.78 22 12 22 12s0 3.22-.418 4.814a2.504 2.504 0 0 1-1.768 1.768c-1.594.418-7.814.418-7.814.418s-6.22 0-7.814-.418a2.505 2.505 0 0 1-1.768-1.768C2 15.22 2 12 2 12s0-3.22.418-4.814a2.505 2.505 0 0 1 1.768-1.768C5.78 5 12 5 12 5s6.22 0 7.812.418ZM9.545 15.568V8.432L15.818 12l-6.273 3.568Z' }
             ];
             const iconSizeClass = containerId === 'footer-social-links' ? 'w-6 h-6' : 'w-8 h-8';
             const baseIconClass = containerId === 'footer-social-links' ? 'text-gray-400' : 'text-gray-600';
-            container.innerHTML = socialLinks.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.name}" class="${baseIconClass} ${link.iconClass} transition duration-300"><svg class="${iconSizeClass}" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${link.svgPath}" clip-rule="evenodd" /></svg></a>`).join('');
+            container.innerHTML = socialLinks.map(link => `<a href="${link.url}" target="_blank" rel="noopener noreferrer" title="${link.name}" class="${baseIconClass} ${link.iconClass} transition duration-300 transform hover:scale-110"><svg class="${iconSizeClass}" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="${link.svgPath}" clip-rule="evenodd" /></svg></a>`).join('');
         }
 
         function renderFooter() {
@@ -697,7 +747,7 @@
             renderCategoryFilters();
             renderFooter();
             renderSocialLinks('contact-social-links');
-            navigateTo('home');
+            navigateTo('home'); // Start with home page visible
 
             categoryFilterElement?.addEventListener('change', (e) => { currentFilterCategory = e.target.value; renderProductList(); });
             sortOrderElement?.addEventListener('change', (e) => { currentSortOrder = e.target.value; renderProductList(); });

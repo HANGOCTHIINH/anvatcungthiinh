@@ -27,7 +27,6 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #78716c; /* stone-500 */
         }
-        /* Page Section Animation */
         .page-section {
             animation: fadeInSlideUp 0.6s ease-out forwards;
             opacity: 0;
@@ -43,7 +42,6 @@
             100% { opacity: 1; transform: translateY(0); }
         }
 
-        /* Chat Window Animation */
         .chat-window {
             transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
             transform: translateY(20px) scale(0.95);
@@ -55,14 +53,13 @@
             opacity: 1;
             pointer-events: auto;
         }
-        /* Map Placeholder */
         .map-placeholder {
             position: relative;
             width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio */
+            padding-bottom: 56.25%;
             height: 0;
             overflow: hidden;
-            background-color: #e5e7eb; /* gray-200 */
+            background-color: #e5e7eb;
             border-radius: 0.5rem;
         }
         .map-placeholder iframe,
@@ -75,10 +72,9 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6b7280; /* gray-500 */
+            color: #6b7280;
             border: 0;
         }
-        /* Banner Overlay */
         .banner-overlay::before {
             content: "";
             position: absolute;
@@ -95,7 +91,6 @@
             position: relative;
             z-index: 2;
         }
-        /* Product Card Hover Animation */
         .product-card {
             transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
         }
@@ -109,11 +104,66 @@
          .product-card:hover img {
             transform: scale(1.03);
         }
-        /* Button Active State */
-        button:active {
+        button:active:not(:disabled) {
             transform: scale(0.97);
         }
-        /* Removed feedback-card specific animation */
+        #product-detail .detailed-description {
+            margin-top: 1rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e5e7eb;
+            font-size: 0.875rem;
+            line-height: 1.6;
+            color: #4b5563;
+        }
+         #product-detail .detailed-description h4 {
+            font-weight: 600;
+            color: #1f2937;
+            margin-bottom: 0.5rem;
+        }
+         #product-detail .detailed-description ul {
+             list-style-type: disc;
+             padding-left: 1.5rem;
+             margin-bottom: 0.75rem;
+         }
+         /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6); /* Darker overlay */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 1.5rem; /* Adjusted padding */
+            border-radius: 0.75rem; /* Slightly more rounded */
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1); /* Enhanced shadow */
+            max-width: 90%;
+            width: 450px; /* Adjusted width */
+            transform: scale(0.95) translateY(10px); /* Start slightly smaller and lower */
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+         .modal-overlay.active .modal-content {
+            transform: scale(1) translateY(0);
+        }
+        /* Input field focus style */
+        .modal-content input:focus, .modal-content textarea:focus {
+             border-color: #f59e0b; /* amber-500 */
+             box-shadow: 0 0 0 2px rgba(245, 158, 11, 0.3); /* Ring effect */
+             outline: none;
+        }
 
     </style>
 </head>
@@ -316,7 +366,7 @@
                   <li>Tìm kiếm và chọn sản phẩm bạn yêu thích (sử dụng ô tìm kiếm ở đầu trang nếu cần).</li>
                   <li>Xem chi tiết sản phẩm, chọn số lượng và nhấn "Thêm vào giỏ hàng".</li>
                   <li>Vào giỏ hàng (biểu tượng ở góc trên bên phải) để kiểm tra lại đơn hàng.</li>
-                  <li>Nhấn "Tiến hành thanh toán" và điền thông tin giao hàng, chọn hình thức thanh toán.</li>
+                  <li>Nhấn "Đặt hàng ngay (COD)" và điền thông tin giao hàng.</li>
                   <li>Xác nhận đơn hàng và chờ chúng tôi giao hàng đến bạn!</li>
                 </ol>
               </section>
@@ -335,6 +385,12 @@
                   </li>
                    <li>
                     <strong>Thanh toán qua ví ZaloPay:</strong> Quét mã QR hoặc thanh toán qua ứng dụng ZaloPay.
+                  </li>
+                   <li>
+                    <strong>Thanh toán qua thẻ Visa/Mastercard (Mô phỏng):</strong> Hiện tại chưa hỗ trợ thanh toán trực tuyến qua thẻ.
+                  </li>
+                   <li>
+                    <strong>Thanh toán qua PayPal (Mô phỏng):</strong> Hiện tại chưa hỗ trợ thanh toán qua PayPal.
                   </li>
                 </ul>
               </section>
@@ -392,7 +448,7 @@
 
         <div id="chat-window" class="chat-window fixed bottom-20 right-5 w-80 sm:w-96 max-h-[70vh] bg-white rounded-lg shadow-xl z-40 flex flex-col border border-gray-300 hidden">
             <div class="bg-amber-500 text-white p-3 flex justify-between items-center rounded-t-lg flex-shrink-0">
-                <h3 class="font-semibold text-sm">Hỗ trợ trực tuyến</h3>
+                <h3 class="font-semibold text-sm">Hỗ trợ trực tuyến (Mô phỏng)</h3>
                 <button id="chatbot-close" class="text-white hover:text-gray-200 p-1 rounded-full hover:bg-white/20">
                   <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
@@ -422,21 +478,67 @@
         </div>
     </div>
 
+    {/* COD Order Modal */}
+    <div id="cod-modal-overlay" class="modal-overlay">
+        <div class="modal-content">
+            <div class="flex justify-between items-center mb-6">
+                <h3 class="text-xl font-semibold text-gray-800">Thông tin đặt hàng (COD)</h3>
+                <button onclick="closeCodOrderModal()" class="text-gray-500 hover:text-gray-700">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <form id="cod-order-form">
+                <div class="mb-4">
+                    <label for="cod-name" class="block text-sm font-medium text-gray-700 mb-1">Họ và tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="cod-name" name="name" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"/>
+                </div>
+                 <div class="mb-4">
+                    <label for="cod-phone" class="block text-sm font-medium text-gray-700 mb-1">Số điện thoại <span class="text-red-500">*</span></label>
+                    <input type="tel" id="cod-phone" name="phone" required pattern="[0-9]{10,11}" title="Số điện thoại gồm 10-11 chữ số" class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"/>
+                </div>
+                <div class="mb-4">
+                    <label for="cod-address" class="block text-sm font-medium text-gray-700 mb-1">Địa chỉ nhận hàng <span class="text-red-500">*</span></label>
+                    <textarea id="cod-address" name="address" rows="3" required class="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-amber-500 focus:border-amber-500"></textarea>
+                </div>
+                 <div class="mb-6 border-t pt-4">
+                     <p class="text-sm text-gray-600">Tổng tiền (tạm tính): <strong id="cod-total-price" class="text-lg text-red-600">0đ</strong></p>
+                     <p class="text-xs text-gray-500">(Phí vận chuyển sẽ được thông báo khi xác nhận đơn)</p>
+                 </div>
+                <button id="confirm-cod-order-button" type="submit" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-md transition duration-300 active:scale-95">
+                    Xác nhận đặt hàng
+                </button>
+            </form>
+        </div>
+    </div>
+
+
     <script>
         const mockProducts = [
-          { id: 1, name: 'Bánh Tráng Trộn Sài Gòn Đặc Biệt', price: 215000, originalPrice: 250000, image: 'https://i-giadinh.vnecdn.net/2023/08/05/mon-7-1691221823-6409-1691221866.jpg', description: 'Hương vị Sài Gòn đích thực, cay nồng đậm đà, topping đầy đặn.', category: 'Món trộn', stock: 15, featured: true, bestSeller: false },
-          { id: 2, name: 'Khô Gà Lá Chanh Thượng Hạng (Hũ 500g)', price: 350000, originalPrice: null, image: 'https://i-giadinh.vnecdn.net/2022/01/14/Thanh-pham-1-1-9068-1642155637.jpg', description: 'Thịt gà dai ngon, thơm lừng vị lá chanh, chuẩn vị nhà làm.', category: 'Khô các loại', stock: 30, featured: false, bestSeller: true },
-          { id: 3, name: 'Da Heo Cháy Tỏi Ớt Siêu Giòn (Hũ Lớn)', price: 280000, originalPrice: 320000, image: 'https://i.ytimg.com/vi/nIxIwNjV-mM/maxresdefault.jpg', description: 'Giòn rụm tan trong miệng, cay cay, ăn là ghiền.', category: 'Món chiên', stock: 5, featured: true, bestSeller: true },
-          { id: 4, name: 'Combo Tokbokki Hoàng Gia Kèm Phô Mai', price: 299000, originalPrice: null, image: 'https://hfood.com.vn/images/images/H%C6%B0%E1%BB%9Bng_d%E1%BA%ABn_chi_ti%E1%BA%BFt_c%C3%A1ch_l%C3%A0m_tokbokki_kh%C3%B4ng_cay.jpg', description: 'Chuẩn vị Hàn Quốc, tiện lợi, kèm sốt phô mai béo ngậy.', category: 'Món Hàn Quốc', stock: 20, featured: false, bestSeller: false },
-          { id: 5, name: 'Mực Bento Thái Lan Cay Cấp Độ 7 (Set 5 Gói)', price: 310000, originalPrice: null, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRePtL_WouaGSzBf2vP_9FDl2sZL1122Kzs7Q&s', description: 'Cay xé lưỡi, đặc sản Thái Lan không thể bỏ qua, siêu tiết kiệm.', category: 'Món Thái Lan', stock: 12, featured: true, bestSeller: false },
-          { id: 6, name: 'Rong Biển Cháy Tỏi Hàn Quốc (Hộp 100g)', price: 205000, originalPrice: null, image: 'https://phucthinhfood.com/uploads/plugin/product_items/384/krs-0029.jpg', description: 'Giòn tan, thơm nức mùi tỏi phi, nhập khẩu Hàn Quốc.', category: 'Món chiên', stock: 0, featured: false, bestSeller: true },
-          { id: 7, name: 'Hạt Óc Chó Mỹ Chandler (Túi 500g)', price: 450000, originalPrice: 500000, image: 'https://hatdieu.org/storage/images/IvILrlLJ4wdI7ke94v5S7HCBbXQY2I78CdkUK9ft.jpeg', description: 'Giàu dinh dưỡng Omega-3, tốt cho trí não và tim mạch.', category: 'Các loại hạt', stock: 25, featured: false, bestSeller: true },
-          { id: 8, name: 'Hạt Điều Rang Muối Bình Phước Loại A (Hũ 500g)', price: 480000, originalPrice: null, image: 'https://fonut.vn/wp-content/uploads/2020/06/A2-scaled.jpg', description: 'Hạt điều loại A thượng hạng, rang muối giòn thơm, vị đậm đà.', category: 'Các loại hạt', stock: 40, featured: true, bestSeller: true },
-          { id: 9, name: 'Hạt Hạnh Nhân Rang Bơ Mỹ (Hũ 400g)', price: 360000, originalPrice: null, image: 'https://dainganfruit.com/wp-content/uploads/2021/07/HAT-HANH-NHAN-RANG-BO-DINH-DUONG-2.jpg', description: 'Thơm ngậy vị bơ, giòn tan, cung cấp năng lượng dồi dào.', category: 'Các loại hạt', stock: 18, featured: false, bestSeller: false },
-          { id: 10, name: 'Hạt Dẻ Cười Mỹ Không Tẩy Trắng (Túi 500g)', price: 495000, originalPrice: 550000, image: 'https://holinut.com/wp-content/uploads/2022/10/hat-de-cuoi.jpg', description: 'Hạt tự nhiên, vị bùi ngọt, giàu chất xơ, tốt cho sức khỏe.', category: 'Các loại hạt', stock: 22, featured: false, bestSeller: false },
-          { id: 11, name: 'Khô Bò Miếng Cay Đặc Sản (Hộp 250g)', price: 390000, originalPrice: null, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7UK0eLDYTmBqlyhN16gEtrXEsdlT1Ce4lww&s', description: 'Thịt bò tươi ngon, tẩm ướp gia vị cay đậm đà theo công thức gia truyền.', category: 'Khô các loại', stock: 35, featured: false, bestSeller: false },
+          { id: 1, name: 'Bánh Tráng Trộn Sài Gòn Đặc Biệt', price: 215000, originalPrice: 250000, image: 'https://i-giadinh.vnecdn.net/2023/08/05/mon-7-1691221823-6409-1691221866.jpg', description: 'Hương vị Sài Gòn đích thực với bánh tráng dẻo, xoài xanh chua giòn, trứng cút béo ngậy, rau răm thơm, đậu phộng rang bùi, hành phi giòn rụm, tép khô đậm đà và sốt bò đen/sa tế cay nồng đặc trưng. Topping đầy đặn, ăn là ghiền.', category: 'Món trộn', stock: 15, featured: true, bestSeller: false },
+          { id: 2, name: 'Khô Gà Lá Chanh Thượng Hạng (Hũ 500g)', price: 350000, originalPrice: null, image: 'https://i-giadinh.vnecdn.net/2022/01/14/Thanh-pham-1-1-9068-1642155637.jpg', description: 'Thịt ức gà tươi được luộc chín, xé sợi và rim cùng nước mắm, đường, ớt và lá chanh tươi thái sợi. Sấy khô vừa tới giúp thịt gà giữ được độ dai ngọt, không quá khô cứng. Vị mặn ngọt cay nhẹ hòa quyện cùng hương thơm đặc trưng của lá chanh.', category: 'Khô các loại', stock: 30, featured: false, bestSeller: true },
+          { id: 3, name: 'Da Heo Cháy Tỏi Ớt Siêu Giòn (Hũ Lớn)', price: 280000, originalPrice: 320000, image: 'https://i.ytimg.com/vi/nIxIwNjV-mM/maxresdefault.jpg', description: 'Da heo được làm sạch, luộc chín và chiên phồng giòn tan. Sau đó sốc đều với hỗn hợp tỏi phi thơm lừng, ớt bột cay cay, nước mắm, đường tạo nên lớp áo gia vị đậm đà, hấp dẫn. Ăn vặt hay làm mồi nhậu đều tuyệt vời.', category: 'Món chiên', stock: 5, featured: true, bestSeller: true },
+          { id: 4, name: 'Combo Tokbokki Hoàng Gia Kèm Phô Mai', price: 299000, originalPrice: null, image: 'https://hfood.com.vn/images/images/H%C6%B0%E1%BB%9Bng_d%E1%BA%ABn_chi_ti%E1%BA%BFt_c%C3%A1ch_l%C3%A0m_tokbokki_kh%C3%B4ng_cay.jpg', description: 'Combo tiện lợi gồm bánh gạo (tokbokki) dẻo dai chuẩn Hàn, chả cá, gói sốt cay ngọt đặc trưng và gói phô mai mozzarella béo ngậy. Chỉ cần vài phút chế biến là có ngay nồi tokbokki nóng hổi, hấp dẫn.', category: 'Món Hàn Quốc', stock: 20, featured: false, bestSeller: false },
+          { id: 5, name: 'Mực Bento Thái Lan Cay Cấp Độ 7 (Set 5 Gói)', price: 310000, originalPrice: null, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRePtL_WouaGSzBf2vP_9FDl2sZL1122Kzs7Q&s', description: 'Đặc sản mực tẩm gia vị cay nồng trứ danh của Thái Lan. Mực được cán mỏng, tẩm ướp gia vị đậm đà với vị cay cấp độ cao, thách thức vị giác. Set 5 gói tiện lợi, tiết kiệm.', category: 'Món Thái Lan', stock: 12, featured: true, bestSeller: false },
+          { id: 6, name: 'Rong Biển Cháy Tỏi Hàn Quốc (Hộp 100g)', price: 205000, originalPrice: null, image: 'https://phucthinhfood.com/uploads/plugin/product_items/384/krs-0029.jpg', description: 'Rong biển sấy khô nhập khẩu từ Hàn Quốc, được rang giòn cùng tỏi phi thơm lừng và chút gia vị mặn ngọt nhẹ. Giòn tan trong miệng, thơm nức mùi tỏi, ăn vặt hoặc ăn với cơm đều ngon.', category: 'Món chiên', stock: 0, featured: false, bestSeller: true },
+          { id: 7, name: 'Hạt Óc Chó Mỹ Chandler (Túi 500g)', price: 450000, originalPrice: 500000, image: 'https://hatdieu.org/storage/images/IvILrlLJ4wdI7ke94v5S7HCBbXQY2I78CdkUK9ft.jpeg', description: 'Hạt óc chó Chandler nhập khẩu từ Mỹ, nổi tiếng với nhân đầy, vị béo bùi tự nhiên. Giàu Omega-3, Omega-6, vitamin và khoáng chất, tốt cho não bộ, tim mạch và sức khỏe tổng thể. Nên sử dụng thường xuyên.', category: 'Các loại hạt', stock: 25, featured: false, bestSeller: true },
+          { id: 8, name: 'Hạt Điều Rang Muối Bình Phước Loại A (Hũ 500g)', price: 480000, originalPrice: null, image: 'https://fonut.vn/wp-content/uploads/2020/06/A2-scaled.jpg', description: 'Hạt điều loại A tuyển chọn từ Bình Phước, hạt to, chắc, không vỡ. Rang cùng muối biển tinh khiết giúp giữ trọn vị ngọt bùi tự nhiên của hạt điều, giòn tan, thơm ngon. Cung cấp năng lượng và chất béo tốt.', category: 'Các loại hạt', stock: 40, featured: true, bestSeller: true },
+          { id: 9, name: 'Hạt Hạnh Nhân Rang Bơ Mỹ (Hũ 400g)', price: 360000, originalPrice: null, image: 'https://dainganfruit.com/wp-content/uploads/2021/07/HAT-HANH-NHAN-RANG-BO-DINH-DUONG-2.jpg', description: 'Hạt hạnh nhân Mỹ được rang cùng bơ lạt cao cấp, tạo nên lớp vỏ thơm ngậy, giòn tan. Giàu vitamin E, magie, chất xơ, tốt cho da, tim mạch và hỗ trợ kiểm soát cân nặng. Ăn trực tiếp hoặc thêm vào ngũ cốc, sữa chua.', category: 'Các loại hạt', stock: 18, featured: false, bestSeller: false },
+          { id: 10, name: 'Hạt Dẻ Cười Mỹ Không Tẩy Trắng (Túi 500g)', price: 495000, originalPrice: 550000, image: 'https://holinut.com/wp-content/uploads/2022/10/hat-de-cuoi.jpg', description: 'Hạt dẻ cười Mỹ tự nhiên, không qua tẩy trắng, giữ nguyên màu sắc và hương vị đặc trưng. Vị bùi, ngọt nhẹ, giàu chất xơ, protein và chất chống oxy hóa. Tốt cho mắt và hệ tiêu hóa.', category: 'Các loại hạt', stock: 22, featured: false, bestSeller: false },
+          { id: 11, name: 'Khô Bò Miếng Cay Đặc Sản (Hộp 250g)', price: 390000, originalPrice: null, image: 'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ7UK0eLDYTmBqlyhN16gEtrXEsdlT1Ce4lww&s', description: 'Thịt bò tươi được chọn lọc kỹ, thái miếng vừa ăn, tẩm ướp gia vị đậm đà theo công thức gia truyền với sả, ớt, tỏi, ngũ vị hương... Sấy khô kỹ lưỡng, giữ được độ dai ngọt của thịt và hương vị cay nồng hấp dẫn.', category: 'Khô các loại', stock: 35, featured: false, bestSeller: false },
+          { id: 12, name: 'Nem chua rán', price: 150000, originalPrice: null, image: 'https://cavienngon.vn/wp-content/uploads/2022/06/FB_IMG_1646064885069.jpg', description: 'Nem chua rán giòn rụm bên ngoài, chua ngọt đậm đà bên trong. Thành phần: thịt heo xay, bì heo, thính gạo, gia vị. Công dụng: món ăn vặt, món nhậu.', category: 'Món chiên', stock: 25, featured: false, bestSeller: false },
+          { id: 13, name: 'Chân gà sả tắc', price: 180000, originalPrice: null, image: 'https://cdn.eva.vn/upload/1-2023/images/2023-02-09/1675939588-493-image3-1675939488-636-width1200height800-1675939588-width1200height800.jpg', description: 'Chân gà giòn sần sật ngâm cùng sả, tắc, ớt, tỏi, nước mắm chua ngọt. Hương vị: chua, cay, mặn, ngọt hài hòa, thơm mùi sả tắc. Công dụng: món ăn vặt, món nhậu.', category: 'Món ngâm/trộn', stock: 20, featured: false, bestSeller: false },
+          { id: 14, name: 'Khoai tây lốc xoáy', price: 120000, originalPrice: null, image: 'https://www.lorca.vn/wp-content/uploads/2024/10/4-79.jpg', description: 'Khoai tây tươi cắt lát xoắn ốc, xiên que, chiên giòn. Hương vị: giòn rụm, có thể rắc thêm phô mai, muối ớt. Công dụng: món ăn vặt đường phố.', category: 'Món chiên', stock: 30, featured: false, bestSeller: false },
+          { id: 15, name: 'Bắp xào', price: 130000, originalPrice: null, image: 'https://i.ytimg.com/vi/82YjnRO47P4/maxresdefault.jpg', description: 'Hạt bắp ngọt xào cùng bơ, tôm khô/tép, hành lá. Hương vị: ngọt của bắp, mặn thơm của tôm khô, béo ngậy của bơ. Công dụng: món ăn vặt quen thuộc.', category: 'Món xào', stock: 35, featured: false, bestSeller: false },
+          { id: 16, name: 'Bánh mì nướng muối ớt', price: 140000, originalPrice: null, image: 'https://file.hstatic.net/200000868155/file/1880-post-cach-lam-banh-mi-nuong-muoi-ot-thom-ngon-an-toan-tai-nha-1.jpg', description: 'Bánh mì ép dẹp, phết sốt muối ớt, mỡ hành, nướng giòn. Hương vị: giòn, cay, mặn, thơm. Công dụng: món ăn vặt, có thể thêm topping.', category: 'Món nướng', stock: 28, featured: false, bestSeller: false },
+          { id: 17, name: 'Phô mai que', price: 160000, originalPrice: null, image: 'https://image.dienmayhtech.com/StaticFiles/Images/2024/05/13/cach-chien-pho-mai-que-bang-noi-chien-khong-dau-1_ffb3.png', description: 'Phô mai mozzarella que tẩm bột chiên xù, chiên vàng. Hương vị: vỏ giòn, phô mai bên trong béo ngậy, kéo sợi. Công dụng: món ăn vặt.', category: 'Món chiên', stock: 22, featured: false, bestSeller: false },
+          { id: 18, name: 'Tào phớ', price: 90000, originalPrice: null, image: 'https://static.vinwonders.com/2022/12/tao-pho-da-nang-2.jpg', description: 'Làm từ đậu nành non, mềm mịn. Hương vị: thanh mát, ăn cùng nước đường gừng, trân châu, thạch... Công dụng: món tráng miệng giải nhiệt.', category: 'Đồ uống/Tráng miệng', stock: 40, featured: false, bestSeller: false },
+          { id: 19, name: 'Trà sữa trân châu', price: 150000, originalPrice: null, image: 'https://mixuediemdien.com/wp-content/uploads/2024/03/Sua-tuoi-tran-chau-duong-den.jpg', description: 'Kết hợp trà, sữa và trân châu dai. Hương vị: thơm trà, béo sữa, ngọt ngào. Công dụng: thức uống giải khát phổ biến.', category: 'Đồ uống/Tráng miệng', stock: 50, featured: false, bestSeller: false },
+          { id: 20, name: 'Nước sâm', price: 80000, originalPrice: null, image: 'https://cdn.tgdd.vn/Files/2019/02/25/1151753/cach-nau-nuoc-sam-thom-ngon-thanh-mat-de-lam-tai-nha-202208251637212192.jpg', description: 'Nấu từ các loại thảo mộc như mía lau, rễ tranh, râu bắp... Hương vị: ngọt thanh tự nhiên. Công dụng: giải nhiệt, thanh lọc cơ thể.', category: 'Đồ uống/Tráng miệng', stock: 30, featured: false, bestSeller: false },
+          { id: 21, name: 'Sữa đậu nành', price: 70000, originalPrice: null, image: 'https://upload.wikimedia.org/wikipedia/commons/0/0f/001-soymilk.jpg', description: 'Làm từ hạt đậu nành xay. Hương vị: thơm béo đặc trưng của đậu nành. Công dụng: thức uống dinh dưỡng, giàu protein thực vật.', category: 'Đồ uống/Tráng miệng', stock: 45, featured: false, bestSeller: false },
         ];
-        const mockCategories = ['Tất cả', 'Món trộn', 'Khô các loại', 'Món chiên', 'Món Hàn Quốc', 'Món Thái Lan', 'Các loại hạt'];
+        const mockCategories = ['Tất cả', 'Món trộn', 'Khô các loại', 'Món chiên', 'Món Hàn Quốc', 'Món Thái Lan', 'Các loại hạt', 'Món ngâm/trộn', 'Món xào', 'Món nướng', 'Đồ uống/Tráng miệng'];
         const mockFeedbacks = [
             { id: 1, name: 'Hà Ngọc Thịnh', quote: 'Đồ ăn vặt ở đây ngon tuyệt vời, đóng gói cẩn thận, giao hàng nhanh. Sẽ ủng hộ shop dài dài!', avatar: 'https://i.imgur.com/ReZZoPu.jpeg' },
             { id: 2, name: 'Nhữ Ngọc Hà', quote: 'Hạt điều rang muối rất giòn và thơm, không bị hôi dầu. Giá cả hợp lý so với chất lượng.', avatar: 'https://i.imgur.com/VCd5abf.png' },
@@ -478,6 +580,9 @@
         const chatInput = document.getElementById('chat-input');
         const mobileMenuButton = document.getElementById('mobile-menu-button');
         const mobileMenu = document.getElementById('mobile-menu');
+        const codModalOverlay = document.getElementById('cod-modal-overlay'); // Get COD modal
+        const codOrderForm = document.getElementById('cod-order-form'); // Get COD form
+        const codTotalPriceElement = document.getElementById('cod-total-price'); // Get total price element in modal
 
         function navigateTo(pageId, params = null) {
             pageSections.forEach(section => {
@@ -500,7 +605,8 @@
                 currentFilterCategory = params?.category || 'Tất cả';
                 currentSearchTerm = params?.search || '';
                 searchInput.value = currentSearchTerm;
-                categoryFilterElement.value = currentFilterCategory;
+                renderCategoryFilters();
+                if (categoryFilterElement) categoryFilterElement.value = currentFilterCategory;
                 renderProductList();
             } else if (pageId === 'product-detail' && params?.productId) {
                 renderProductDetail(params.productId);
@@ -510,8 +616,8 @@
                 currentFilterCategory = 'Tất cả';
                 currentSearchTerm = '';
                 searchInput.value = '';
-                categoryFilterElement.value = currentFilterCategory;
-                sortOrderElement.value = 'default';
+                if(categoryFilterElement) categoryFilterElement.value = currentFilterCategory;
+                if(sortOrderElement) sortOrderElement.value = 'default';
                 renderHomePageContent();
             }
 
@@ -609,8 +715,11 @@
                             <p class="text-2xl lg:text-3xl text-red-600 font-bold">${formatCurrency(product.price)}</p>
                             ${hasDiscount ? `<p class="text-lg lg:text-xl text-gray-500 line-through">${formatCurrency(product.originalPrice)}</p>` : ''}
                         </div>
-                        <p class="text-gray-700 mb-4 leading-relaxed text-sm">${product.description}</p>
-                        <p class="mb-4 text-sm"><span class="font-semibold">Tình trạng: </span>${product.stock > 0 ? `<span class="text-green-600 font-medium">Còn hàng (${product.stock})</span>` : `<span class="text-red-600 font-medium">Hết hàng</span>`}</p>
+                        <div class="detailed-description">
+                            <h4>Mô tả chi tiết:</h4>
+                            <p>${product.description}</p>
+                        </div>
+                        <p class="mb-4 text-sm mt-4"><span class="font-semibold">Tình trạng: </span>${product.stock > 0 ? `<span class="text-green-600 font-medium">Còn hàng (${product.stock})</span>` : `<span class="text-red-600 font-medium">Hết hàng</span>`}</p>
                         <p class="mb-4 text-sm"><span class="font-semibold">Danh mục: </span> ${product.category}</p>
                         ${product.stock > 0 ? `
                             <div class="flex items-center mb-6">
@@ -650,12 +759,16 @@
                     </div>`;
             }).join('');
             const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
-            cartContentContainer.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-2 space-y-4">${itemsHTML}</div><div class="lg:col-span-1"><div class="bg-gray-50 p-6 rounded-lg shadow-sm border sticky top-24"><h2 class="text-xl font-semibold mb-4">Tóm Tắt Đơn Hàng</h2><div class="flex justify-between mb-2 text-sm"><span>Tạm tính:</span><span>${formatCurrency(total)}</span></div><div class="flex justify-between mb-4 pb-4 border-b text-sm"><span>Phí vận chuyển:</span><span>(Tính khi thanh toán)</span></div><div class="flex justify-between font-bold text-lg mb-6"><span>Tổng cộng:</span><span class="text-red-600">${formatCurrency(total)}</span></div><button onclick="alert('Chức năng thanh toán chưa được triển khai!')" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow hover:shadow-lg active:scale-95">Tiến hành thanh toán</button></div></div></div>`;
+            // Updated checkout button onclick to open COD modal
+            cartContentContainer.innerHTML = `<div class="grid grid-cols-1 lg:grid-cols-3 gap-8"><div class="lg:col-span-2 space-y-4">${itemsHTML}</div><div class="lg:col-span-1"><div class="bg-gray-50 p-6 rounded-lg shadow-sm border sticky top-24"><h2 class="text-xl font-semibold mb-4">Tóm Tắt Đơn Hàng</h2><div class="flex justify-between mb-2 text-sm"><span>Tạm tính:</span><span>${formatCurrency(total)}</span></div><div class="flex justify-between mb-4 pb-4 border-b text-sm"><span>Phí vận chuyển:</span><span>(Tính khi thanh toán)</span></div><div class="flex justify-between font-bold text-lg mb-6"><span>Tổng cộng:</span><span class="text-red-600">${formatCurrency(total)}</span></div><button id="cod-order-button" onclick="openCodOrderModal()" class="w-full bg-amber-500 hover:bg-amber-600 text-white font-bold py-3 rounded-lg transition duration-300 shadow hover:shadow-lg active:scale-95">Đặt hàng ngay (COD)</button></div></div></div>`;
         }
 
         function renderCategoryFilters() {
             if (!categoryFilterElement) return;
-            categoryFilterElement.innerHTML = mockCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            // Prevent re-rendering if options already exist
+            if (categoryFilterElement.options.length <= 1) {
+                 categoryFilterElement.innerHTML = mockCategories.map(cat => `<option value="${cat}">${cat}</option>`).join('');
+            }
         }
 
         function renderCategoryLinks() {
@@ -666,7 +779,6 @@
 
         function renderCustomerFeedback() {
             if (!customerFeedbackContainer) return;
-            // Removed feedback-card class and style here
             customerFeedbackContainer.innerHTML = mockFeedbacks.map(feedback => `
                 <div class="bg-white p-6 rounded-lg shadow-md border border-amber-100 text-center flex flex-col items-center h-full transition-shadow duration-300 hover:shadow-lg">
                     <img src="${feedback.avatar}" alt="[Ảnh đại diện của ${feedback.name}]" class="w-20 h-20 rounded-full mb-4 object-cover border-2 border-amber-300 flex-shrink-0" onerror="this.onerror=null; this.src='https://placehold.co/100x100/cccccc/ffffff?text=?';"/>
@@ -678,7 +790,6 @@
         function renderSocialLinks(containerId) {
             const container = document.getElementById(containerId);
             if (!container) return;
-            // Updated social links
             const socialLinks = [
                 { name: 'Facebook', url: 'https://www.facebook.com/', iconClass: 'hover:text-blue-500', svgPath: 'M22 12c0-5.523-4.477-10-10-10S2 6.477 2 12c0 4.991 3.657 9.128 8.438 9.878v-6.987h-2.54V12h2.54V9.797c0-2.506 1.492-3.89 3.777-3.89 1.094 0 2.238.195 2.238.195v2.46h-1.26c-1.243 0-1.63.771-1.63 1.562V12h2.773l-.443 2.89h-2.33v6.988C18.343 21.128 22 16.991 22 12z' },
                 { name: 'Instagram', url: 'https://www.instagram.com/', iconClass: 'hover:text-pink-500', svgPath: 'M12.315 2.104a5.87 5.87 0 00-4.63 0C3.381 2.56 1.087 4.854.622 9.135a5.87 5.87 0 000 4.63c.465 4.281 2.76 6.575 7.045 7.04a5.87 5.87 0 004.63 0c4.285-.465 6.58-2.76 7.04-7.04a5.87 5.87 0 000-4.63c-.46-4.281-2.755-6.575-7.04-7.04zm-1.19 16.097a4.08 4.08 0 01-3.42-.465c-2.91-.93-4.516-3.006-4.837-6.14a4.08 4.08 0 010-3.42c.321-3.135 1.927-5.21 4.837-6.14a4.08 4.08 0 013.42-.465c2.91.93 4.516 3.006 4.837 6.14a4.08 4.08 0 010 3.42c-.321 3.135-1.927 5.21-4.837 6.14a4.08 4.08 0 01-3.42.465zM12 6.865a5.135 5.135 0 100 10.27 5.135 5.135 0 000-10.27zm0 8.468a3.333 3.333 0 110-6.666 3.333 3.333 0 010 6.666zm5.338-9.87a1.2 1.2 0 100 2.4 1.2 1.2 0 000-2.4z' },
@@ -736,10 +847,97 @@
         function handleQuantityInputChange(productId) { const input = document.getElementById(`quantity-input-${productId}`); const product = mockProducts.find(p => p.id === productId); if (input && product) { let value = parseInt(input.value, 10); if (isNaN(value) || value < 1) { input.value = 1; } else if (value > product.stock) { alert(`Chỉ còn ${product.stock} sản phẩm.`); input.value = product.stock; } updateQuantityButtonStates(productId); } }
         function updateQuantityButtonStates(productId) { const input = document.getElementById(`quantity-input-${productId}`); const decreaseBtn = document.getElementById(`decrease-qty-${productId}`); const increaseBtn = document.getElementById(`increase-qty-${productId}`); const product = mockProducts.find(p => p.id === productId); if (input && decreaseBtn && increaseBtn && product) { const currentValue = parseInt(input.value, 10); decreaseBtn.disabled = currentValue <= 1; increaseBtn.disabled = currentValue >= product.stock; } }
 
-        let chatMessages = [ { sender: 'ai', text: 'Xin chào! Tôi là trợ lý ảo của Ăn Vặt Cùng Thiinh. Tôi có thể giúp gì cho bạn?' } ];
+        let chatMessages = [ { sender: 'ai', text: 'Xin chào! Tôi là trợ lý ảo của Ăn Vặt Cùng Thiinh (mô phỏng). Tôi có thể giúp gì cho bạn về sản phẩm hoặc cách mua hàng?' } ];
         let isChatbotTyping = false;
         function renderChatMessages() { if (!chatMessagesContainer) return; chatMessagesContainer.innerHTML = chatMessages.map(msg => `<div class="flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}"><div class="px-3 py-2 rounded-lg max-w-[80%] text-sm ${ msg.sender === 'user' ? 'bg-blue-500 text-white' : msg.isError ? 'bg-red-100 text-red-700' : 'bg-gray-200 text-gray-800' }">${msg.text}</div></div>`).join(''); if (isChatbotTyping) { chatMessagesContainer.innerHTML += `<div class="flex justify-start typing-indicator"><div class="px-3 py-2 rounded-lg bg-gray-200 text-gray-500 italic text-sm">Đang trả lời...</div></div>`; } chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight; }
-        async function simulateBackendChatResponse(userMessage) { isChatbotTyping = true; renderChatMessages(); await new Promise(resolve => setTimeout(resolve, 1500)); let aiResponseText = `(Phản hồi mô phỏng cho: "${userMessage}") - Tôi chỉ có thể trả lời các câu hỏi về cửa hàng thôi ạ.`; const lowerMsg = userMessage.toLowerCase(); if (lowerMsg.includes("vận chuyển") || lowerMsg.includes("giao hàng")) { aiResponseText = "Shop giao hàng toàn quốc ạ. Khu vực Thái Nguyên và tỉnh lân cận mất 1-2 ngày, các tỉnh khác 2-4 ngày. Phí ship sẽ được tính khi thanh toán."; } else if (lowerMsg.includes("thanh toán")) { aiResponseText = "Bạn có thể thanh toán khi nhận hàng (COD), chuyển khoản, hoặc qua ví MoMo/ZaloPay nhé."; } else if (lowerMsg.includes("đổi trả")) { aiResponseText = "Shop hỗ trợ đổi trả trong 3 ngày nếu sản phẩm lỗi hoặc giao sai. Bạn xem chi tiết ở trang Hỗ trợ hoặc liên hệ hotline nha."; } else if (lowerMsg.includes("bánh tráng")) { aiResponseText = "Bánh tráng trộn Sài Gòn đặc biệt bên shop topping đầy đặn, vị đậm đà lắm ạ!"; } else if (lowerMsg.includes("hạt điều") || lowerMsg.includes("hạt óc chó")) { aiResponseText = "Các loại hạt bên shop đều là hàng loại 1, đảm bảo chất lượng ạ. Hạt điều giòn thơm, óc chó thì bổ dưỡng lắm."; } else if (lowerMsg.includes("chào") || lowerMsg.includes("hello")) { aiResponseText = "Chào bạn! Bạn cần Thiinh hỗ trợ thông tin gì về đồ ăn vặt ạ?"; } else if (lowerMsg.includes("cảm ơn") || lowerMsg.includes("thank")) { aiResponseText = "Dạ không có gì ạ! Rất vui được hỗ trợ bạn."; } isChatbotTyping = false; chatMessages.push({ sender: 'ai', text: aiResponseText }); renderChatMessages(); }
+
+        async function simulateBackendChatResponse(userMessage) {
+            isChatbotTyping = true;
+            renderChatMessages();
+            await new Promise(resolve => setTimeout(resolve, 1500));
+
+            let aiResponseText = `Xin lỗi, tôi chưa hiểu câu hỏi của bạn lắm. Bạn có thể hỏi cụ thể hơn về món ăn (ví dụ: 'nem chua rán có giòn không?', 'chân gà sả tắc có cay nhiều không?'), hoặc hỏi về cách đặt hàng, giao hàng, thanh toán nhé. Nếu cần hỗ trợ phức tạp hơn, bạn vui lòng gọi hotline ạ.`;
+            const lowerMsg = userMessage.toLowerCase();
+
+            const productKeywords = {
+                "nem chua": "Nem chua rán bên shop giòn rụm, vị chua ngọt nhẹ, chấm tương ớt là ngon nhất ạ! Làm từ thịt heo, bì heo, thính gạo.",
+                "chân gà": "Chân gà sả tắc giòn sần sật, vị chua cay mặn ngọt rất đậm đà, thơm mùi sả tắc. Hơi cay nhẹ bạn nhé!",
+                "khoai tây lốc xoáy": "Khoai tây lốc xoáy được cắt xoắn ốc, chiên giòn tan. Bạn có thể chọn rắc thêm phô mai hoặc muối ớt ạ.",
+                "bắp xào": "Bắp xào bơ tôm khô thơm nức mũi, vị ngọt của bắp quyện với vị mặn của tôm khô rất hấp dẫn.",
+                "bánh mì nướng": "Bánh mì nướng muối ớt giòn tan, vị cay cay mặn mặn, thêm topping chà bông, xúc xích nữa là chuẩn bài.",
+                "phô mai que": "Phô mai que vỏ ngoài giòn, bên trong phô mai mozzarella kéo sợi béo ngậy, chấm tương cà hay tương ớt đều ngon.",
+                "tào phớ": "Tào phớ mềm mịn, thanh mát, ăn cùng nước đường gừng và topping trân châu, thạch là giải nhiệt mùa hè tuyệt vời.",
+                "trà sữa": "Trà sữa trân châu vị trà thơm, sữa béo, trân châu dai dai, bạn có thể chọn mức đường đá phù hợp nhé.",
+                "nước sâm": "Nước sâm thảo mộc có vị ngọt thanh, giúp giải nhiệt, mát gan, rất tốt cho sức khỏe.",
+                "sữa đậu nành": "Sữa đậu nành nhà làm thơm ngon, giàu dinh dưỡng, bạn có thể uống nóng hoặc lạnh.",
+                "khô gà": "Khô gà lá chanh dai ngọt, thơm mùi lá chanh, vị mặn ngọt cay nhẹ, ăn vặt hay làm quà đều hợp.",
+                "da heo": "Da heo cháy tỏi ớt siêu giòn, vị mặn ngọt cay cay, thơm mùi tỏi phi, ăn rất cuốn.",
+                "tokbokki": "Tokbokki chuẩn vị Hàn, bánh gạo dẻo, sốt cay ngọt đậm đà, có kèm phô mai béo ngậy.",
+                "mực bento": "Mực Bento Thái Lan cay xé lưỡi, dành cho bạn nào thích ăn cay ạ. Mực được tẩm ướp đậm đà.",
+                "rong biển": "Rong biển cháy tỏi giòn tan, thơm mùi tỏi, vị mặn ngọt nhẹ, ăn vặt tốt cho sức khỏe.",
+                "hạt óc chó": "Hạt óc chó Mỹ giàu Omega-3, tốt cho não bộ và tim mạch, vị béo bùi tự nhiên.",
+                "hạt điều": "Hạt điều rang muối Bình Phước loại A, hạt to, giòn, vị mặn ngọt bùi.",
+                "hạnh nhân": "Hạnh nhân rang bơ thơm ngậy, giòn tan, cung cấp nhiều vitamin E và magie.",
+                "hạt dẻ cười": "Hạt dẻ cười Mỹ không tẩy trắng, vị bùi ngọt, giàu chất xơ."
+            };
+
+            let foundProduct = false;
+            for (const keyword in productKeywords) {
+                if (lowerMsg.includes(keyword)) {
+                    aiResponseText = productKeywords[keyword];
+                    if (lowerMsg.includes("giá") || lowerMsg.includes("bao nhiêu tiền")) {
+                         const product = mockProducts.find(p => p.name.toLowerCase().includes(keyword));
+                         if(product) aiResponseText += ` Giá hiện tại là ${formatCurrency(product.price)}.`;
+                    } else if (lowerMsg.includes("còn hàng") || lowerMsg.includes("hết hàng")) {
+                         const product = mockProducts.find(p => p.name.toLowerCase().includes(keyword));
+                         if(product) aiResponseText += product.stock > 0 ? ` Hiện tại đang còn ${product.stock} sản phẩm ạ.` : ` Rất tiếc món này đang tạm hết hàng.`;
+                    } else if (lowerMsg.includes("mua") || lowerMsg.includes("đặt")) {
+                         const product = mockProducts.find(p => p.name.toLowerCase().includes(keyword));
+                         if(product) aiResponseText += ` Bạn có thể nhấn vào nút 'Xem chi tiết' của sản phẩm ${product.name} để xem thêm và đặt hàng nhé.`;
+                         else aiResponseText += ` Bạn vào trang Sản phẩm để tìm và đặt hàng nha.`;
+                    }
+                    foundProduct = true;
+                    break;
+                }
+            }
+
+            if (!foundProduct) {
+                 if (lowerMsg.includes("mua hàng") || lowerMsg.includes("đặt hàng") || lowerMsg.includes("thêm vào giỏ")) {
+                    aiResponseText = "Để mua hàng, bạn chỉ cần vào trang sản phẩm, chọn món bạn thích, nhấn 'Xem chi tiết', chọn số lượng rồi nhấn 'Thêm vào giỏ hàng'. Sau đó vào biểu tượng giỏ hàng ở góc trên để kiểm tra và nhấn 'Đặt hàng ngay (COD)' nhé.";
+                } else if (lowerMsg.includes("vận chuyển") || lowerMsg.includes("giao hàng") || lowerMsg.includes("ship") || lowerMsg.includes("phí ship")) {
+                    aiResponseText = "Shop giao hàng toàn quốc ạ. Khu vực Thái Nguyên và tỉnh lân cận mất 1-2 ngày, các tỉnh khác 2-4 ngày. Phí ship sẽ được tính tự động khi bạn nhập địa chỉ ở bước đặt hàng.";
+                } else if (lowerMsg.includes("thanh toán")) {
+                    aiResponseText = "Hiện tại shop chủ yếu nhận thanh toán khi nhận hàng (COD). Bạn cũng có thể chuyển khoản hoặc dùng MoMo/ZaloPay. Chi tiết có ở trang Hỗ trợ ạ.";
+                } else if (lowerMsg.includes("đổi trả")) {
+                    aiResponseText = "Shop hỗ trợ đổi trả trong 3 ngày nếu sản phẩm lỗi hoặc giao sai. Bạn xem chi tiết ở trang Hỗ trợ hoặc liên hệ hotline nha.";
+                } else if (lowerMsg.includes("chào") || lowerMsg.includes("hello")) {
+                    aiResponseText = "Chào bạn! Bạn cần Thiinh hỗ trợ thông tin gì về đồ ăn vặt ạ?";
+                } else if (lowerMsg.includes("cảm ơn") || lowerMsg.includes("thank")) {
+                    aiResponseText = "Dạ không có gì ạ! Rất vui được hỗ trợ bạn.";
+                } else if (lowerMsg.includes("liên hệ") || lowerMsg.includes("địa chỉ") || lowerMsg.includes("số điện thoại")) {
+                     aiResponseText = "Bạn có thể xem thông tin liên hệ chi tiết ở trang Liên hệ nhé, hoặc gọi hotline 0987 654 321.";
+                }
+            }
+
+            isChatbotTyping = false;
+            chatMessages.push({ sender: 'ai', text: aiResponseText });
+            renderChatMessages();
+        }
+
+        function openCodOrderModal() {
+            if (codModalOverlay && codTotalPriceElement) {
+                 const total = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+                 codTotalPriceElement.textContent = formatCurrency(total);
+                 codModalOverlay.classList.add('active');
+            }
+        }
+
+        function closeCodOrderModal() {
+             if (codModalOverlay) {
+                codModalOverlay.classList.remove('active');
+            }
+        }
+
 
         function initializePage() {
             loadCart();
@@ -747,17 +945,62 @@
             renderCategoryFilters();
             renderFooter();
             renderSocialLinks('contact-social-links');
-            navigateTo('home'); // Start with home page visible
+            navigateTo('home');
 
             categoryFilterElement?.addEventListener('change', (e) => { currentFilterCategory = e.target.value; renderProductList(); });
             sortOrderElement?.addEventListener('change', (e) => { currentSortOrder = e.target.value; renderProductList(); });
             searchForm?.addEventListener('submit', (e) => { e.preventDefault(); currentSearchTerm = searchInput.value; navigateTo('products', { search: currentSearchTerm }); });
-            document.getElementById('contact-form')?.addEventListener('submit', (e) => { e.preventDefault(); alert('Chức năng gửi liên hệ chưa được triển khai!'); });
+
+            // Corrected contact form listener
+            document.getElementById('contact-form')?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                alert('Gửi tin nhắn thành công! Chúng tôi sẽ phản hồi sớm nhất có thể.');
+                e.target.reset();
+            });
+
+             // COD Order Form Submission Listener
+            codOrderForm?.addEventListener('submit', (e) => {
+                e.preventDefault();
+                const name = document.getElementById('cod-name').value.trim();
+                const phone = document.getElementById('cod-phone').value.trim();
+                const address = document.getElementById('cod-address').value.trim();
+
+                if (!name || !phone || !address) {
+                    alert('Vui lòng điền đầy đủ thông tin đặt hàng.');
+                    return;
+                }
+
+                // Basic phone validation (example)
+                if (!/^[0-9]{10,11}$/.test(phone)) {
+                     alert('Số điện thoại không hợp lệ. Vui lòng kiểm tra lại.');
+                     return;
+                }
+
+
+                // Simulate order placement
+                console.log('Đơn hàng COD:', { name, phone, address, items: cartItems, total: codTotalPriceElement.textContent });
+                alert('Đặt hàng thành công! Chúng tôi sẽ liên hệ xác nhận đơn hàng của bạn.');
+
+                cartItems = []; // Clear cart
+                saveCart();
+                updateCartIcon();
+                closeCodOrderModal();
+                navigateTo('home'); // Navigate to home after successful order
+            });
+
+
             mobileMenuButton?.addEventListener('click', () => { mobileMenu?.classList.toggle('hidden'); });
             chatbotToggle?.addEventListener('click', () => { chatWindow.classList.toggle('hidden'); if (!chatWindow.classList.contains('hidden')) { setTimeout(() => chatWindow.classList.add('open'), 10); renderChatMessages(); } else { chatWindow.classList.remove('open'); } });
             chatbotClose?.addEventListener('click', () => { chatWindow.classList.add('hidden'); chatWindow.classList.remove('open'); });
             chatForm?.addEventListener('submit', (e) => { e.preventDefault(); const userInput = chatInput.value.trim(); if (userInput && !isChatbotTyping) { chatMessages.push({ sender: 'user', text: userInput }); renderChatMessages(); chatInput.value = ''; simulateBackendChatResponse(userInput); } });
             renderChatMessages();
+
+            // Close modal when clicking outside
+             codModalOverlay?.addEventListener('click', (e) => {
+                if (e.target === codModalOverlay) {
+                    closeCodOrderModal();
+                }
+            });
         }
 
         function renderHomePageContent() {
